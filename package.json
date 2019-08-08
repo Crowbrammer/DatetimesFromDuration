@@ -1,6 +1,6 @@
 {
   "name": "datetimesfromduration",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "For if you have a duration (of, say, a task), and you want a start time and an end time from this duration.",
   "main": "index.js",
   "scripts": {
