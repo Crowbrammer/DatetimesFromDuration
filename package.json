@@ -1,0 +1,23 @@
+{
+  "name": "datetimesfromduration",
+  "version": "1.0.0",
+  "description": "For if you have a duration (of, say, a task), and you want a start time and an end time from this duration.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "datetime",
+    "duration"
+  ],
+  "author": "Aaron Bell",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
+    "sinon": "^7.4.1"
+  },
+  "dependencies": {
+    "@types/node": "^12.7.1"
+  }
+}
