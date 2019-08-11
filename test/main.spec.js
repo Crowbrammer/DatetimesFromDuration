@@ -28,13 +28,27 @@ describe("Datetimes from Duration", () => {
         const dfd = new DFD(5); 
         expect(dfd.end).to.equal("8/8/2019, 6:42:42 AM");
     });
+    
+    it("Works if the number is repped as a string", () => {
+        const dfd = new DFD("5"); 
+        expect(dfd.start).to.equal("8/8/2019, 1:42:42 AM");
+        expect(dfd.end).to.equal("8/8/2019, 6:42:42 AM");
+
+    });
 
     it("Handles an array of one number", () => {
         //
         const dfd = new DFD([5]);
         expect(dfd[0].end).to.equal("8/8/2019, 6:42:42 AM");
     });
-    
+
+    it("Handles an array of one number repped as a string", () => {
+        const dfd = new DFD(["5"]); 
+        expect(dfd[0].start).to.equal("8/8/2019, 1:42:42 AM");
+        expect(dfd[0].end).to.equal("8/8/2019, 6:42:42 AM");
+
+    });
+
     it("Makes the start time of the second task the same as the end time of the first task", () => {
         const dfd = new DFD([5, 6]);
         expect(dfd[0].end).to.equal("8/8/2019, 6:42:42 AM");
@@ -60,6 +74,16 @@ describe("Datetimes from Duration", () => {
         expect(dfd[1].end).to.equal("8/8/2019, 12:42:42 PM");
         expect(dfd[2].start).to.equal("8/8/2019, 12:42:42 PM");
         expect(dfd[2].end).to.equal("8/8/2019, 3:42:42 PM");
-        
+    });
+    
+    it("Returns a series of start and end times if an array of numbers repped as strings is passed", () => {
+        getEndDatetimePOSIX.restore();
+        const dfd = new DFD(["5", "6", "3"]);
+        expect(dfd[0].end).to.equal("8/8/2019, 6:42:42 AM");
+        // End time of second should be new Date(1565282562879).toLocaleString();
+        expect(dfd[1].start).to.equal("8/8/2019, 6:42:42 AM");
+        expect(dfd[1].end).to.equal("8/8/2019, 12:42:42 PM");
+        expect(dfd[2].start).to.equal("8/8/2019, 12:42:42 PM");
+        expect(dfd[2].end).to.equal("8/8/2019, 3:42:42 PM");
     });
 });

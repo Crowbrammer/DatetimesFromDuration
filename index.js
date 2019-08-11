@@ -5,12 +5,22 @@ module.exports = /** @class */ (function () {
         // Units start out as hours
         // inXXXX will recalculate all the times.
         this.inHours();
-        if (typeof duration === "number") {
+        if (typeof duration === "number" || typeof duration === "string") {
             // Calc the start and end time for a single number;
+            this.duration = parseInt(this.duration);
             this.start = this.getStartDatetime();
             this.end = this.getEndDatetime();
         }
         else if (Array.isArray(duration)) {
+            // It's likely that strings will be passed in instead of 
+            // actual numbers (do to form submissions). Convert the numbers
+            // into arrays.
+            var durations = [];
+            for (var i = 0; i < this.duration.length; i++) {
+                durations.push(parseInt(this.duration[i]));
+            }
+            ;
+            this.duration = durations;
             // Store start and end times in an index
             if (duration.length === 0) {
                 throw "Array of durations must be of length > 0";
@@ -25,7 +35,7 @@ module.exports = /** @class */ (function () {
                     this[i] = {};
                     this[i].start = this[i - 1].end;
                     // getEndDatetime needs to accept past start times, durations
-                    this[i].end = this.getEndDatetime(this[i].start, duration[i]);
+                    this[i].end = this.getEndDatetime(this[i].start, parseInt(duration[i]));
                 }
                 // After the first 
             }
