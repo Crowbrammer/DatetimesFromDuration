@@ -1,10 +1,16 @@
 "use strict";
-module.exports = /** @class */ (function () {
-    function DFD(duration) {
+module.exports = class DFD {
+    constructor(duration) {
         this.duration = duration;
         // Units start out as hours
         // inXXXX will recalculate all the times.
-        this.inHours();
+        this.start = "";
+        this.end = "";
+        const HOURS = 1000 * 60 * 60;
+        this.units = HOURS;
+        this.createStartAndEndTimes(duration);
+    }
+    createStartAndEndTimes(duration) {
         if (typeof duration === "number" || typeof duration === "string") {
             // Calc the start and end time for a single number;
             this.duration = parseInt(this.duration);
@@ -15,12 +21,7 @@ module.exports = /** @class */ (function () {
             // It's likely that strings will be passed in instead of 
             // actual numbers (do to form submissions). Convert the numbers
             // into arrays.
-            var durations = [];
-            for (var i = 0; i < this.duration.length; i++) {
-                durations.push(parseInt(this.duration[i]));
-            }
-            ;
-            this.duration = durations;
+            this.convertDurationsFromStringsToNumbers();
             // Store start and end times in an index
             if (duration.length === 0) {
                 throw "Array of durations must be of length > 0";
@@ -31,29 +32,36 @@ module.exports = /** @class */ (function () {
             }
             else if (duration.length > 1) {
                 this.setFirstStartAndEndTime();
-                for (var i = 1; i < duration.length; i++) {
+                for (let i = 1; i < duration.length; i++) {
                     this[i] = {};
                     this[i].start = this[i - 1].end;
-                    // getEndDatetime needs to accept past start times, durations
-                    this[i].end = this.getEndDatetime(this[i].start, parseInt(duration[i]));
+                    this[i].end = this.getEndDatetime(this[i].start, parseInt((duration[i])));
                 }
-                // After the first 
             }
         }
     }
-    DFD.prototype.setFirstStartAndEndTime = function () {
+    convertDurationsFromStringsToNumbers() {
+        let durations = [];
+        for (let i = 0; i < this.duration.length; i++) {
+            // parseInt also works with integers.
+            durations.push(parseInt(this.duration[i]));
+        }
+        ;
+        this.duration = durations;
+    }
+    setFirstStartAndEndTime() {
         this[0] = {};
         this[0].start = this.getStartDatetime();
         this[0].end = this.getEndDatetime();
-    };
-    DFD.prototype.setSingleNumberDatetimes = function (obOrProperty) {
+    }
+    setSingleNumberDatetimes(obOrProperty) {
         obOrProperty.start = this.getStartDatetime();
         obOrProperty.end = this.getEndDatetime();
-    };
-    DFD.prototype.getStartDatetime = function () {
+    }
+    getStartDatetime() {
         return new Date().toLocaleString();
-    };
-    DFD.prototype.getEndDatetime = function (startTime, duration) {
+    }
+    getEndDatetime(startTime, duration) {
         if (!startTime || !duration) {
             return new Date(this.getEndDatetimePOSIX()).toLocaleString();
         }
@@ -61,15 +69,15 @@ module.exports = /** @class */ (function () {
             this.getEndDatetimePOSIX(startTime, duration);
             return new Date(this.getEndDatetimePOSIX(startTime, duration)).toLocaleString();
         }
-    };
-    DFD.prototype.getEndDatetimePOSIX = function (startTime, duration) {
+    }
+    getEndDatetimePOSIX(startTime, duration) {
         if (!startTime && !duration) {
-            var startTime_1 = new Date(this.getStartDatetime()).valueOf();
+            let startTime = new Date(this.getStartDatetime()).valueOf(); // can this be this.start?
             if (Array.isArray(this.duration)) {
-                return startTime_1 + this.units * this.duration[0];
+                return startTime + this.units * this.duration[0];
             }
             else {
-                return startTime_1 + this.units * this.duration;
+                return startTime + this.units * this.duration;
             }
         }
         else if (!startTime || !duration) {
@@ -78,27 +86,28 @@ module.exports = /** @class */ (function () {
         else {
             return new Date(startTime).valueOf() + this.units * duration;
         }
-    };
+    }
     /**
      * DFD will use the duration(s) as hours to determine start
      * and end datetimes.
      */
-    DFD.prototype.inDays = function () {
+    inDays() {
         this.units = 1000 * 60 * 60 * 24;
-    };
+    }
     /**
      * DFD will use the duration(s) as hours to determine start
      * and end datetimes.
      */
-    DFD.prototype.inHours = function () {
+    inHours() {
         this.units = 1000 * 60 * 60;
-    };
+    }
     /**
      * DFD will use the duration(s) as minutes to determine start
      * and end datetimes.
      */
-    DFD.prototype.inMinutes = function () {
+    inMinutes() {
         this.units = 1000 * 60;
-    };
-    return DFD;
-}());
+        this.createStartAndEndTimes(this.duration);
+        return this;
+    }
+};
