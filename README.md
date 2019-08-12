@@ -33,6 +33,13 @@ describe("Datetimes from Duration", () => {
         expect(dfd.end).to.equal("8/8/2019, 6:42:42 AM");
     });
     
+    it("Returns five minutes from now for the end time.", () => {
+        getEndDatetimePOSIX.restore();
+        const dfd = new DFD(5).inMinutes(); 
+        expect(dfd.start).to.equal("8/8/2019, 1:42:42 AM");
+        expect(dfd.end).to.equal("8/8/2019, 1:47:42 AM");
+    });
+    
     it("Works if the number is repped as a string", () => {
         const dfd = new DFD("5"); 
         expect(dfd.start).to.equal("8/8/2019, 1:42:42 AM");
