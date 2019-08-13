@@ -93,6 +93,39 @@ describe("Datetimes from Duration", () => {
         expect(dfd[2].start).to.equal("8/8/2019, 12:42:42 PM");
         expect(dfd[2].end).to.equal("8/8/2019, 3:42:42 PM");
     });
-
     
+    it("Batches startEndTime objects under a date", () => {
+        getEndDatetimePOSIX.restore();
+        const dfd = new DFD(["5", "6", "3"]).splitIt();
+        let expectedResult = {
+            "8/8/2019": [
+                {start: "1:42:42 AM", end: "6:42:42 AM"},
+                {start: "6:42:42 AM", end: "12:42:42 PM"},
+                {start: "12:42:42 PM", end: "3:42:42 PM"}
+            ]
+        }
+        expect(dfd).to.deep.include(expectedResult);
+    });
+    
+    it("Batches startEndTime objects under a date, even if a single duration is put in", () => {
+        getEndDatetimePOSIX.restore();
+        const dfd = new DFD(5).splitIt();
+        let expectedResult = {
+            "8/8/2019": [
+                {start: "1:42:42 AM", end: "6:42:42 AM"}
+            ]
+        }
+        expect(dfd).to.deep.include(expectedResult);
+    });
+    
+    it("Let's me get the dates from the dates property", () => {
+        getEndDatetimePOSIX.restore();
+        const dfd = new DFD(5).splitIt();
+        let expectedResult = {
+            "8/8/2019": [
+                {start: "1:42:42 AM", end: "6:42:42 AM"}
+            ]
+        }
+        expect(dfd.dates).to.deep.include(expectedResult);
+    });
 });

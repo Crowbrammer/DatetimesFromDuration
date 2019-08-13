@@ -6,6 +6,7 @@ module.exports = class DFD {
         // inXXXX will recalculate all the times.
         this.start = "";
         this.end = "";
+        this.dates = {};
         const HOURS = 1000 * 60 * 60;
         this.units = HOURS;
         this.createStartAndEndTimes(duration);
@@ -109,5 +110,62 @@ module.exports = class DFD {
         this.units = 1000 * 60;
         this.createStartAndEndTimes(this.duration);
         return this;
+    }
+    splitIt() {
+        this.dates = {};
+        // Is it possible to have this[0] if an array is passed in? 
+        if (this[0]) {
+            // Do it for all startEnd timestrings. Not an array, so I'll use 
+            // the original list of durations.
+            for (let i = 0; i < this.duration.length; i++) {
+                // It creates an array at the date, if not arealdy
+                let date = new Date(this[i].start).toLocaleDateString();
+                if (!this[date])
+                    this[date] = [];
+                // Make it available in the dates property, too.
+                if (!this.dates[date])
+                    this.dates[date] = this[date];
+                // Put the timestring of the start datetime string and end datetime string,
+                // into another object;
+                let startTime = new Date(this[i].start).toLocaleTimeString();
+                let endTime = new Date(this[i].end).toLocaleTimeString();
+                let startEndTimestring = {
+                    start: startTime,
+                    end: endTime
+                };
+                // Add it to the list of actions under the time.
+                this[date].push(startEndTimestring);
+            }
+        }
+        else {
+            // It should handle if one number/string was passed as a duration.
+            // This largely repeats the above branch. Could be refactored easily. 
+            // It creates an array at the date, if not arealdy
+            let date = new Date(this.start).toLocaleDateString();
+            if (!this[date])
+                this[date] = [];
+            // Make it available in the dates property, too.
+            if (!this.dates[date])
+                this.dates[date] = this[date];
+            // Put the timestring of the start datetime string and end datetime string,
+            // into another object;
+            let startTime = new Date(this.start).toLocaleTimeString();
+            let endTime = new Date(this.end).toLocaleTimeString();
+            let startEndTimestring = {
+                start: startTime,
+                end: endTime
+            };
+            // Add it to the list of actions under the time.
+            this[date].push(startEndTimestring);
+        }
+        // When all start & end times are accounted for, return this.
+        return this;
+        // return {
+        //     "8/8/2019": [
+        //         {start: "1:42:42 AM", end: "6:42:42 AM"},
+        //         {start: "6:42:42 AM AM", end: "12:42:42 PM"},
+        //         {start: "12:42:42 PM", end: "3:42:42 PM"}
+        //     ]
+        // }
     }
 };
